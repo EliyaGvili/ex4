@@ -44,13 +44,14 @@ public:
      */
     bool isEqual(Passenger p);
 
+    /*
+     * Function that serialize passenger.
+     */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
         ar & startPoint;
         ar & endPoint;
     }
-
-
 };
 
 

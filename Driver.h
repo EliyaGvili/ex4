@@ -33,7 +33,7 @@ private:
     int numOfCostumers;
     Graph *cityGrid;
     list <Passenger> currentPassengers;
-    deque<Node> wayToCostumer;
+    list<Node> wayToCostumer;
     int requestedCabID;
 
 
@@ -147,7 +147,7 @@ public:
      */
     void updateCabLocation(Node n);
 
-    deque<Node> getWayToCostumer ();
+    list<Node> getWayToCostumer ();
 
     /*
      * Function that prints the driver's location.
@@ -164,11 +164,25 @@ public:
      */
     bool operator!=(const Driver &rhs) const;
 
+    /*
+     * Function that return requested cab id.
+     */
     int getRequestedCabID();
 
+    /*
+     * Function that get requested cab id and set it.
+     */
     void setRequestedCabID(int requestedCabID);
-    friend class boost::serialization::access;
 
+    /*
+     * Function that get list of nodes and sets it.
+     */
+    void setWayToCostumer(list <Node> givenWayToCostumer);
+
+    /*
+     * Function that serialize the driver.
+     */
+    friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)
     {
@@ -184,8 +198,6 @@ public:
         ar & wayToCostumer;
         ar & requestedCabID;
     }
-
 };
-
 
 #endif

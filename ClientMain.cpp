@@ -74,13 +74,15 @@ int main(int argc, char *argv[]) {
     driver->setCab(*basicCab);
 
     //receving the size of way - means the number of points.
-    socket->reciveData(buffer, sizeof(buffer));
-    cout<< buffer <<endl;
+   /* socket->reciveData(buffer, sizeof(buffer));
+    cout<< buffer <<endl;*/
 
     //socket->reciveData(buffer, sizeof(buffer));
-    int numOfNodes = atoi(buffer);
-    int i=0;
-    while (i<numOfNodes){
+    //int numOfNodes = atoi(buffer);
+    //int i=0;
+    bool reciveData = true;
+    while (reciveData){
+        socket->reciveData(buffer, sizeof(buffer));
         Node* node;
         boost::iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
         boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s3
@@ -90,13 +92,15 @@ int main(int argc, char *argv[]) {
         ia >> node;
 
         driver->updateCabLocation(*node);
-        i++;
+        cout<<*node<<endl;
+        socket->reciveData(buffer, sizeof(buffer));
+        string str = buffer;
+        if (buffer=="close"){
+            reciveData= false;
+        }
     }
 
-    socket->reciveData(buffer, sizeof(buffer));
-    if (buffer=="close"){
-        socket->~Socket();
-    }
+
     return 0;
 }
 

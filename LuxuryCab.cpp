@@ -12,7 +12,6 @@ LuxuryCab::LuxuryCab(int cabId, Manufacturer carM, Color carColor) {
     tarrif = 2;
     speed = 2;
     location = Node(Point(0, 0));
-
 }
 
 LuxuryCab::LuxuryCab(int cabId, double meters, Manufacturer carM,

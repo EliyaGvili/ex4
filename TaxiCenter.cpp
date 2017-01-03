@@ -7,14 +7,12 @@ TaxiCenter::TaxiCenter() {
 
 TaxiCenter::TaxiCenter(int x) {
     x = 4;
-    counter=0;
-
+    counter = 0;
 }
 
 void TaxiCenter::answerCall() {
-
-    for (int i = 0; i < trips.size(); ++i) {
-        for (int j = 0; j < drivers.size(); ++j) {
+    for (int j = 0; j < drivers.size(); ++j) {
+        for (int i = 0; i < trips.size(); ++i) {
             if (trips.at(i).getStartPoint().isEqual(drivers.at(j).getCabInfo
                     ().getLocation())) {
                 drivers.at(j).calculateWayToCostumer(trips.at(i).getEndPoint());
@@ -22,46 +20,49 @@ void TaxiCenter::answerCall() {
                 continue;
             }
         }
-
     }
-
 }
 
 void TaxiCenter::sendCab() {
-
-    if (trips.at(0).getCounter()==counter) {
+    counter++;
+    reachedToDest = false;
+    toSend = false;
+    if (trips.at(0).getCounter() == counter) {
+        answerCall();
+        return;
+    } else if (trips.at(0).getCounter() < counter) {
+        toSend = true;
         Driver d = trips.at(0).getDriver();
-        if (d.getWayToCostumer().empty()){
+
+        list <Node> nodeList = d.getWayToCostumer();
+        bool sendLocation = true;
+        Node node;
+        if (d.getCabInfo().getSpeed() != 1) {
+            node = nodeList.front();
+            nodeList.pop_front();
+            if (node.isEqual(trips.at(0).getEndPoint())) {
+                sendLocation = false;
+            }
+        }
+        if (sendLocation) {
+            node = nodeList.front();
+            nodeList.pop_front();
+        }
+
+        d.updateCabLocation(node);
+        d.setWayToCostumer(nodeList);
+        trips.at(0).setDriver(d);
+        int place = findDriverPlace(d);
+        drivers.at(place) = d;
+        if (node.isEqual(trips.at(0).getEndPoint())) {
             removeDriver(d);
             addDriver(d);
-            removeTrip(trips.at(0));
-            counter++;
-            closeSocket= true;
+            reachedToDest = true;
             return;
         }
-        int id = trips.at(0).getDriver().getId();
-        Node node = findDriverByID(id).getWayToCostumer().front();
-        trips.at(0).getDriver().updateCabLocation(node);
-        trips.at(0).getDriver().getWayToCostumer().pop_front();
-        drivers.at(findDriverPlace(d)).updateCabLocation(node);
-        drivers.at(findDriverPlace(d)).getWayToCostumer().pop_front();
-        closeSocket= false;
-        /*for (int i = 0; i < trips.size(); ++i) {
-            stack<Node> nodeStack = trips.at(
-                    i).getDriver().calculateWayToCostumer(
-                    trips.at(i).getEndPoint());
-            Driver d = findDriverByID(trips.at(i).getDriver().getId());
-            removeDriver(d);
-            //update the new location of the driver, remove him and add him again.
-            d.updateCabLocation(nodeStack.top());
-            addDriver(d);
-            removeTrip(trips.at(i));
-        }*/
-    } else {
-        counter++;
-        closeSocket = false;
     }
 }
+
 
 void TaxiCenter::addDriver(Driver driver) {
     drivers.push_back(driver);
@@ -133,17 +134,20 @@ Driver TaxiCenter::findDriverByID(int id) {
 
 int TaxiCenter::findDriverPlace(Driver d) {
     for (int i = 0; i < drivers.size(); ++i) {
-        if (d.isEqual(drivers.at(i))){
+        if (d.isEqual(drivers.at(i))) {
             return i;
         }
     }
 }
+
 void TaxiCenter::updateGraph(Graph *g) {
     for (int i = 0; i < drivers.size(); ++i) {
         drivers.at(i).setGraph(g);
     }
 }
 
-bool TaxiCenter::isCloseSocket() const {
-    return closeSocket;
+bool TaxiCenter::isToSend() const {
+    return toSend;
 }
+
+

@@ -65,11 +65,13 @@ public:
      */
     friend ostream &operator<<(ostream &output, const Point &p);
 
+    /*
+     * Function that serialize point.
+     */
     friend class boost::serialization::access;
 
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & x;
         ar & y;
     }

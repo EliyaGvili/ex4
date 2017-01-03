@@ -11,6 +11,9 @@ public:
      */
     LuxuryCab();
 
+    /*
+     * The LuxuryCab constructor.
+     */
     LuxuryCab(int cabId, Manufacturer carM, Color carColor);
 
     /*
@@ -20,17 +23,12 @@ public:
     LuxuryCab(int cabId, double meters, Manufacturer carM, Color carColor,
               double carTarrif, int cabSpeed);
 
+    /*
+     * Function that serialize the luxury cab.
+     */
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & boost::serialization::base_object<BasicCab>(*this);
-        /*ar & id;
-        ar & totalMeters;
-        ar & tarrif;
-        ar & speed;
-        ar & carKind;
-        ar & color;
-        ar & location;*/
     }
 
 };

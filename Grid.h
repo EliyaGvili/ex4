@@ -6,7 +6,6 @@
 #define EX1_MATRIX_H
 
 
-
 #include "Graph.h"
 #include <iostream>
 
@@ -63,17 +62,13 @@ public:
      */
     bool isEqual(Grid g);
 
+    /*
+     * FUnction that serialize the grid.
+     */
     friend class boost::serialization::access;
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & boost::serialization::base_object<Graph>(*this);
-        //ar & sizeX;
-        //ar & sizeY;
-       // ar & grid;
-        //ar & BOOST_SERIALIZATION_NVP(sizeX);
-        //ar & BOOST_SERIALIZATION_NVP(sizeY);
-        //ar & BOOST_SERIALIZATION_NVP(grid);
     }
 };
 

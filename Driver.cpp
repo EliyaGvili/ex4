@@ -14,7 +14,6 @@ Driver::Driver(int id2, int age2, MartialStatus status, int experiance2) {
     avgSatisfaction = 0;
 }
 
-
 void Driver::setCab(BasicCab cab) {
     cabInfo = cab;
 }
@@ -64,7 +63,6 @@ int Driver::getNumOfCostumers() const {
 }
 
 Graph *Driver::getCityGraph() {
-    // Grid g (5,6);
     return cityGrid;
 }
 
@@ -89,13 +87,12 @@ list <Passenger> Driver::getCurrentPassengers() {
 
 void Driver::updateCabLocation(Node n) {
     cabInfo.setLocation(n);
-
 }
 
-stack<Node> Driver::calculateWayToCostumer(Node dstNode) {
-    stack<Node> nodeStack;
+stack <Node> Driver::calculateWayToCostumer(Node dstNode) {
+    stack <Node> nodeStack;
     Node startNode = cabInfo.getLocation();
-    queue<Node> nodeQueue;
+    queue <Node> nodeQueue;
     dstNode.setValid(true);
     Node oNode(Point(-1, -1));
     oNode.setValid(false);
@@ -108,16 +105,24 @@ stack<Node> Driver::calculateWayToCostumer(Node dstNode) {
     BFS bfs(dstNode);
     Node n = bfs.bfs(startNode, nodeQueue, *cityGrid);
     nodeStack = bfs.returnFasterRoad();
-    nodeStack.pop();
-    stack<Node> stack1 (wayToCostumer);
-    std::swap(stack1, nodeStack);
-
+    int size = nodeStack.size();
+    int j;
+    if (size == 1) {
+        j = 0;
+    } else {
+        j = 1;
+    }
+    for (int i = j; i < size; ++i) {
+        wayToCostumer.push_front(nodeStack.top());
+        nodeStack.pop();
+    }
     return nodeStack;
 }
 
-deque<Node> Driver::getWayToCostumer() {
+list <Node> Driver::getWayToCostumer() {
     return wayToCostumer;
 }
+
 ostream &operator<<(ostream &output, Driver const &d) {
     output << d.cabInfo.getLocation();
 }
@@ -136,4 +141,8 @@ int Driver::getRequestedCabID() {
 
 void Driver::setRequestedCabID(int requestedCabID) {
     Driver::requestedCabID = requestedCabID;
+}
+
+void Driver::setWayToCostumer(list <Node> givenWayToCostumer) {
+    wayToCostumer = givenWayToCostumer;
 }

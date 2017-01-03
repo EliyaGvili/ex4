@@ -32,10 +32,5 @@ void Grid::validateNeighbors(Node node) {
     node.validateNeighbors(sizeX, sizeY);
 }
 
-
-/*bool Grid::isEqual(Grid g) {
-    return ((sizeX == g.getWidth()) && (sizeY == getHeight()));
-}*/
-
 BOOST_CLASS_EXPORT(Grid);
 

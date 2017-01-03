@@ -22,10 +22,8 @@ private:
     Graph *cleanGraph;
     vector<Node> obstacles;
     int counter;
-    bool closeSocket;
-public:
-    bool isCloseSocket() const;
-
+    bool reachedToDest;
+    bool toSend;
 public:
 
     /*
@@ -120,7 +118,20 @@ public:
      */
     void updateGraph(Graph *g);
 
+    /*
+     * Function that get driver and return its place in the taxi center.
+     */
     int findDriverPlace(Driver d);
+
+    /*
+     * Function that return is to sent true.
+     */
+    bool isToSend() const;
+
+    /*
+     * Function that return is reached true.
+     */
+    bool isReached() const;
 };
 
 

@@ -29,8 +29,8 @@ protected:
     Node location;
 public:
 
-
     BasicCab();
+
     /*
      * Function that return the car kind (manufacturer).
      */
@@ -92,14 +92,17 @@ public:
      */
     bool operator!=(const BasicCab &rhs) const;
 
-
+    /*
+     * Function that prints cab with <<.
+     */
     friend ostream &operator<<(ostream &output, const BasicCab &c);
 
+    /*
+     * Function that serialize
+     */
     friend class boost::serialization::access;
-
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & id;
         ar & totalMeters;
         ar & tarrif;
@@ -109,6 +112,5 @@ public:
         ar & location;
     }
 };
-
 
 #endif //EX3_BASICCAB_H

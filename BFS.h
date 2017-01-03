@@ -24,7 +24,6 @@ public:
      */
     BFS(Node n);
 
-
     /*
      * bfs function, get node, destination node, queue of nodes and pointer to graph.
      * It returns a node after calculating the shortest path between the 2 nodes.
@@ -57,6 +56,5 @@ public:
     Node getDsNode() const;
 
 };
-
 
 #endif

@@ -103,15 +103,13 @@ public:
      */
     void deleteNeighbors();
 
+    /*
+     * Function that serialize node.
+     */
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & point;
         ar & passed;
-        //ar & neighbors;
-       // for (int i=0; i<4; i++){
-        //    ar & neighbors[i];
-       // }
         ar & numOfNeighbors;
         ar & validNode;
     }

@@ -17,10 +17,12 @@ public:
      * The Cab constructor.
      * Gets cab id, meters, manufacturer, color, tarrif and cab speed.
      */
-
     Cab(int cabId, double meters, Manufacturer carM, Color carColor,
         double caTarrif, int cabSpeed);
 
+    /*
+     * Function that serialize the cab.
+     */
     friend class boost::serialization::access;
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version)

@@ -8,7 +8,7 @@
 class MainFlow {
 private:
     TaxiCenter taxiCenter;
-    Graph* graph;
+    Graph *graph;
 
 public:
     /*
@@ -41,17 +41,17 @@ public:
      * Function that gets a driver id from the user, and prints the
      * driver's location.
      */
-    void printDriverLocation(string str) throw( exception);
+    void printDriverLocation(string str) throw(exception);
 
     /*
      * Function that validates the number of obstacles given from the user.
      */
-    bool validateNumOfObstacles (int numOfObstacles);
+    bool validateNumOfObstacles(int numOfObstacles);
 
     /*
      * Function that validates the grid's parameters given from the user.
      */
-    bool validateGridParameters (int x, int y);
+    bool validateGridParameters(int x, int y);
 
     /*
      * The function that runs the program - there are 7 choices, every number
@@ -59,7 +59,10 @@ public:
      */
     void startFlow();
 
-    void recieveDriver(Socket* socket);
+    /*
+     * Function that recive driver from the socket.
+     */
+    void recieveDriver(Socket *socket);
 
 };
 
