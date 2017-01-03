@@ -1,0 +1,291 @@
+#include "MainFlow.h"
+#include "LuxuryCab.h"
+
+MainFlow::MainFlow() {
+
+}
+
+MainFlow::MainFlow(TaxiCenter t) {
+    taxiCenter = t;
+}
+
+void MainFlow::startFlow() {
+    string str;
+    int x, y, numOfObstacles;
+
+    getline(cin, str);
+    x = atoi((str.substr(0, 1)).c_str());
+    y = atoi((str.substr(str.find(" ") + 1, 1)).c_str());
+    parseGrid(x,y);
+
+    getline(cin, str);
+    numOfObstacles = atoi(str.c_str());
+    parseObstacles(numOfObstacles);
+
+    char taskNum;
+    do {
+        getline(cin, str);
+        taskNum = str[0];
+        switch (taskNum) {
+            case '1': {
+                getline(cin,str);
+                parseDriver(str);
+                break;
+            }
+            case '2': {
+                getline(cin,str);
+                parseTrip(str);
+                break;
+            }
+            case '3': {
+                getline(cin,str);
+                parseVehicle(str);
+                break;
+            }
+            case '4': {
+                getline(cin,str);
+                printDriverLocation(str);
+                break;
+            }
+            case '6': {
+                startDriving(x,y,numOfObstacles);
+                //startDriving!!!!!!!!!!!!
+
+                break;
+            }
+            case '7': {
+                //end!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+                break;
+            }
+            default:
+                //wrong inputtt!!!!!!!!!!!!!!!!!!!!!!1
+                break;
+        }
+    } while (taskNum != '7');
+}
+
+void MainFlow::parseGrid(int x, int y)throw(exception) {
+    if ((x<=0) || (y<=0)){
+        throw std::invalid_argument("wrong input!");
+    }
+    Grid grid(x, y);
+    graph = &grid;
+}
+void MainFlow::parseDriver(string str) throw(exception) {
+    int saperatorP, driverId, driverAge, driverExp, vehiclId;
+    char driverStatus;
+    MartialStatus driverStatusStr;
+    saperatorP = str.find(",");
+    driverId = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (driverId<0){
+        throw std::invalid_argument("wrong input-id");
+    }
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    driverAge = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (driverAge<0){
+        throw std::invalid_argument("wrong input-age");
+    }
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    driverStatus = (str.substr(0, 1))[0];
+    switch (driverStatus) {
+        case 'S':
+            driverStatusStr = SINGLE;
+            break;
+        case 'M':
+            driverStatusStr = MARRIED;
+            break;
+        case 'D':
+            driverStatusStr = DIVORCED;
+            break;
+        case 'W':
+            driverStatusStr = WIDOWED;
+            break;
+    }
+
+    str = str.substr(saperatorP + 1);
+    if (str[0]=='-'){
+        throw std::invalid_argument("wrong input - exp");
+    }
+    saperatorP = str.find(",");
+    driverExp = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    str = str.substr(saperatorP + 1);
+    vehiclId = atoi((str.substr(0)).c_str());
+    if (vehiclId<0){
+        throw  std::invalid_argument("wrong inpu - vehicleId");
+    }
+    Driver driver(driverId, driverAge, driverStatusStr, driverExp);
+    BasicCab cab = taxiCenter.findCabByID(vehiclId);
+    driver.setCab(cab);
+    driver.setGraph(graph);
+    taxiCenter.addDriver(driver);
+}
+
+void MainFlow::parseTrip(string str) throw(exception) {
+    int saperatorP, tripId, tripXStart, tripYStart, tripXEnd, tripYEnd, tripNumOfPass;
+    double tripTarrif;
+
+    saperatorP = str.find(",");
+    tripId = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (tripId<0){
+        throw std::invalid_argument("wrong input - id");
+    }
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    tripXStart = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (tripXStart<0){
+        throw std::invalid_argument("wrong input");
+    }
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    tripYStart = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (tripYStart<0){
+        throw std::invalid_argument("wrong input");
+    }
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    tripXEnd = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (tripXEnd<0){
+        throw std::invalid_argument("wrong input");
+    }
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    tripYEnd = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (tripYEnd<0){
+        throw std::invalid_argument("wrong input");
+    }
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    tripNumOfPass = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (tripNumOfPass<=0){
+        throw std::invalid_argument("wrong input");
+    }
+    str = str.substr(saperatorP + 1);
+    //saperatorP = str.find(",");
+    tripTarrif = atof((str.substr(0)).c_str());
+    if (tripTarrif<0){
+        throw std::invalid_argument("wrong input");
+    }
+
+    TripInformation t(tripId, Node(Point(tripXStart, tripYStart)),
+                      Node(Point(tripXEnd, tripYEnd)), tripNumOfPass, tripTarrif);
+    taxiCenter.addTrip(t);
+}
+
+void MainFlow::parseVehicle(string str) throw(exception) {
+    int saperatorP, vehicleId, vehicleType;
+    Manufacturer vehicleManufacturer;
+    Color vehicleColor;
+    char vehicleManu, vehicleColorCh;
+
+    saperatorP = str.find(",");
+    vehicleId = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if (vehicleId<0){
+        throw std::invalid_argument("wrong input");
+    }
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    vehicleType = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
+    if ((vehicleType!=1)&&(vehicleType!=2)){
+        throw std::invalid_argument("wrong input");
+    }
+
+    str = str.substr(saperatorP + 1);
+    saperatorP = str.find(",");
+    vehicleManu = (str.substr(0, 1))[0];
+    switch (vehicleManu) {
+        case 'H':
+            vehicleManufacturer = HONDA;
+            break;
+        case 'S':
+            vehicleManufacturer = SUBARO;
+            break;
+        case 'T':
+            vehicleManufacturer = TESLA;
+            break;
+        case 'F':
+            vehicleManufacturer = FIAT;
+            break;
+    }
+    str = str.substr(saperatorP + 1);
+    //saperatorP = str.find(",");
+    vehicleColorCh = (str.substr(0, 1))[0];
+    switch (vehicleColorCh) {
+        case 'R':
+            vehicleColor = RED;
+            break;
+        case 'B':
+            vehicleColor = BLUE;
+            break;
+        case 'G':
+            vehicleColor = GREEN;
+            break;
+        case 'P':
+            vehicleColor = PINK;
+            break;
+        case 'W':
+            vehicleColor = WHITE;
+            break;
+    }
+    BasicCab bc;
+    if (vehicleType == 1) {
+        Cab cab(vehicleId, vehicleManufacturer, vehicleColor);
+        bc = cab;
+    } else if (vehicleType == 2) {
+        LuxuryCab luxCab(vehicleId, vehicleManufacturer, vehicleColor);
+        bc = luxCab;
+    }
+    taxiCenter.addCab(bc);
+}
+
+void MainFlow::printDriverLocation(string str) throw(exception) {
+    int driverIdGet;
+
+    driverIdGet = atoi(str.c_str());
+    if (driverIdGet<0){
+        throw std::invalid_argument("wrong input");
+    }
+    Driver d = taxiCenter.findDriverByID(driverIdGet);
+    cout << d.getCabInfo().getLocation() << endl;
+}
+
+void MainFlow::parseObstacles (int numOfObstacles) throw(exception) {
+    if (numOfObstacles<0){
+        throw std::invalid_argument("wrong input!");
+    }
+    else {
+        string str;
+        Node trashNode(Point(-1,-1));
+        trashNode.setValid(false);
+        trashNode.setPassed(true);
+        for (int i = 0; i < numOfObstacles; ++i) {
+            getline(cin, str);
+
+            Point p(atoi((str.substr(0, 1)).c_str()), atoi((str.substr((str.find(",") + 1), 1)).c_str()));
+            Node n(p);
+            obstacles.push_back(n);
+            graph->setSource(n,trashNode);
+            graph->getSource(n).setPassed(true);
+        }
+    }
+}
+
+void MainFlow::startDriving(int x, int y, int numOfObstacles) {
+    taxiCenter.answerCall();
+    taxiCenter.sendCab();
+
+    Grid grid2 (x,y);
+    graph=&grid2;
+    if (numOfObstacles>0) {
+        Node trashNode(Point(-1, -1));
+        trashNode.setValid(false);
+        trashNode.setPassed(true);
+        for (int i = 0; i < numOfObstacles; ++i) {
+            Node n = obstacles.at(i);
+            graph->setSource(n, trashNode);
+            graph->getSource(n).setPassed(true);
+        }
+    }
+    taxiCenter.updateGraph(graph);
+}
