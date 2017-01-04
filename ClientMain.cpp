@@ -2,9 +2,8 @@
 #include <queue>
 #include "Point.h"
 #include "MainFlow.h"
-//#include <boost/serialization/export.hpp>
-
-//BOOST_CLASS_EXPORT(Grid)
+#include "sockets/Udp.h"
+#include <unistd.h>
 
 using namespace std;
 /**
@@ -12,42 +11,39 @@ using namespace std;
  * Responsible for running the program.
  */
 
-#include "sockets/Udp.h"
-#include <unistd.h>
-
 using namespace std;
-Driver* parseDriver(string str) throw(exception);
+
+Driver *parseDriver(string str) throw(exception);
 
 int main(int argc, char *argv[]) {
     string str;
 
-
-
-    const char* ip_address = "127.0.0.1";
-    const int port_num = 5555;
+    const char *ip_address = argv[1];
+    const int port_num = atoi(argv[2]);
 
 
     std::cout << "Hello, from client" << std::endl;
 
-    Socket* socket = new Udp(0,port_num);
+    Socket *socket = new Udp(0, port_num);
     socket->initialize();
 
-    getline(cin,str);
-    Driver* driver = parseDriver(str);
+    getline(cin, str);
+    Driver *driver = parseDriver(str);
 
     //attaching the driver "fake" parameters just for the serialization
-    Cab c (0,HONDA,GREEN);
-    c.setLocation(Node(Point(8,0)));
+    Cab c(0, HONDA, GREEN);
+    c.setLocation(Node(Point(0, 0)));
     driver->setCab(c);
-    Graph *graph;
-    Grid grid (1,1);
+    Graph * graph;
+    Grid grid(1, 1);
     graph = &grid;
     driver->setGraph(graph);
 
     //**Serialize**//
     std::string serial_str;
-    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
-    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(inserter);
+    boost::iostreams::back_insert_device <std::string> inserter(serial_str);
+    boost::iostreams::stream <boost::iostreams::back_insert_device<std::string>> s(
+            inserter);
     boost::archive::binary_oarchive oa(s);
     oa << driver;
     s.flush();
@@ -62,9 +58,9 @@ int main(int argc, char *argv[]) {
     socket->reciveData(buffer, sizeof(buffer));
 
     //**DeSerialize**//
-    BasicCab* basicCab;
+    BasicCab *basicCab;
     boost::iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
-    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s2
+    boost::iostreams::stream <boost::iostreams::basic_array_source<char>> s2
             (device);
     boost::archive::binary_iarchive ia(s2);
 
@@ -72,51 +68,49 @@ int main(int argc, char *argv[]) {
 
     //attaching the relevant cab to the driver
     driver->setCab(*basicCab);
-
-    //receving the size of way - means the number of points.
-   /* socket->reciveData(buffer, sizeof(buffer));
-    cout<< buffer <<endl;*/
-
-    //socket->reciveData(buffer, sizeof(buffer));
-    //int numOfNodes = atoi(buffer);
-    //int i=0;
     bool reciveData = true;
-    while (reciveData){
+    while (reciveData) {
         socket->reciveData(buffer, sizeof(buffer));
-        Node* node;
-        boost::iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
-        boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s3
+        string str = buffer;
+        if (str == "close") {
+            reciveData = false;
+            continue;
+        }
+        socket->reciveData(buffer, sizeof(buffer));
+        Node *node;
+        boost::iostreams::basic_array_source<char> device(buffer,
+                                                          sizeof(buffer));
+        boost::iostreams::stream <boost::iostreams::basic_array_source<char>> s3
                 (device);
         boost::archive::binary_iarchive ia(s3);
 
         ia >> node;
 
         driver->updateCabLocation(*node);
-        cout<<*node<<endl;
-        socket->reciveData(buffer, sizeof(buffer));
-        string str = buffer;
-        if (buffer=="close"){
-            reciveData= false;
-        }
+        cout << *node << endl;
+        delete node;
+
+
     }
-
-
+    delete driver;
+    delete basicCab;
+    delete socket;
     return 0;
 }
 
-Driver* parseDriver(string str) throw(exception) {
+Driver *parseDriver(string str) throw(exception) {
     int saperatorP, driverId, driverAge, driverExp, vehiclId;
     char driverStatus;
     MartialStatus driverStatusStr;
     saperatorP = str.find(",");
     driverId = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
-    if (driverId<0){
+    if (driverId < 0) {
         throw exception();
     }
     str = str.substr(saperatorP + 1);
     saperatorP = str.find(",");
     driverAge = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
-    if (driverAge<0){
+    if (driverAge < 0) {
         throw exception();
     }
     str = str.substr(saperatorP + 1);
@@ -140,25 +134,19 @@ Driver* parseDriver(string str) throw(exception) {
     }
 
     str = str.substr(saperatorP + 1);
-    if (str[0]=='-'){
+    if (str[0] == '-') {
         throw exception();
     }
     saperatorP = str.find(",");
     driverExp = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
     str = str.substr(saperatorP + 1);
     vehiclId = atoi((str.substr(0)).c_str());
-    if (vehiclId<0){
-        throw  exception();
+    if (vehiclId < 0) {
+        throw exception();
     }
     //creating the driver
-    Driver* driver= new Driver(driverId, driverAge, driverStatusStr,
-            driverExp);
+    Driver *driver = new Driver(driverId, driverAge, driverStatusStr,
+                                driverExp);
     driver->setRequestedCabID(vehiclId);
     return driver;
-   /* //attacing the driver the relevant cab
-    BasicCab cab = taxiCenter.findCabByID(vehiclId);
-    driver.setCab(cab);
-    driver.setGraph(graph);
-    //attaching the driver to the taxi center.
-    taxiCenter.addDriver(driver);*/
 }

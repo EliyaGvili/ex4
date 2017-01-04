@@ -98,7 +98,7 @@ public:
     bool operator!=(const TripInformation &rhs) const;
 
     /*
-     * Function that return the counter.
+     * Function that return the trip counter.
      */
     int getCounter();
 };

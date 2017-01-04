@@ -8,10 +8,7 @@
 
 #include "Graph.h"
 #include <iostream>
-
 #include <boost/serialization/export.hpp>
-
-//#include <boost/serialization/base_object.hpp>
 
 /*
  * Grid class implements the Graph functions.
@@ -25,6 +22,11 @@ public:
      * The Grid constructor.
      */
     Grid();
+
+    /*
+     * the grid destructor.
+     */
+    ~Grid();
 
     /*
      * The Grid constructor, get the grid width and height.
@@ -63,9 +65,10 @@ public:
     bool isEqual(Grid g);
 
     /*
-     * FUnction that serialize the grid.
+     * Function that serialize the grid.
      */
     friend class boost::serialization::access;
+
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
         ar & boost::serialization::base_object<Graph>(*this);

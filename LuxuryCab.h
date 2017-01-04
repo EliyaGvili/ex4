@@ -12,8 +12,13 @@ public:
     LuxuryCab();
 
     /*
-     * The LuxuryCab constructor.
+     * The LuxuryCab destructor
      */
+    ~LuxuryCab();
+
+    /*
+    * The LuxuryCab constructor.
+    */
     LuxuryCab(int cabId, Manufacturer carM, Color carColor);
 
     /*
@@ -24,7 +29,7 @@ public:
               double carTarrif, int cabSpeed);
 
     /*
-     * Function that serialize the luxury cab.
+     * Function that serialize luxury cab.
      */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {

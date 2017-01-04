@@ -11,6 +11,14 @@ public:
      */
     Cab();
 
+    /*
+     * The Cab destructor.
+     */
+    ~Cab();
+
+    /*
+     * The cab constructor
+     */
     Cab(int cabId, Manufacturer carM, Color carColor);
 
     /*
@@ -21,20 +29,13 @@ public:
         double caTarrif, int cabSpeed);
 
     /*
-     * Function that serialize the cab.
+     * Function that serialize Cab.
      */
     friend class boost::serialization::access;
+
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & boost::serialization::base_object<BasicCab>(*this);
-        /*ar & id;
-        ar & totalMeters;
-        ar & tarrif;
-        ar & speed;
-        //ar & carKind;
-        //ar & color;
-        ar & location;*/
     }
 
 };

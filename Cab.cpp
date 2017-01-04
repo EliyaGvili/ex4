@@ -4,6 +4,10 @@ Cab::Cab() {
 
 }
 
+Cab::~Cab() {
+
+}
+
 Cab::Cab(int cabId, Manufacturer carM, Color carColor) {
     id = cabId;
     totalMeters = 0;

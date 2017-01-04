@@ -12,6 +12,7 @@ TaxiCenter::TaxiCenter(int x) {
 
 void TaxiCenter::answerCall() {
     for (int j = 0; j < drivers.size(); ++j) {
+
         for (int i = 0; i < trips.size(); ++i) {
             if (trips.at(i).getStartPoint().isEqual(drivers.at(j).getCabInfo
                     ().getLocation())) {
@@ -27,6 +28,9 @@ void TaxiCenter::sendCab() {
     counter++;
     reachedToDest = false;
     toSend = false;
+    if (trips.empty()) {
+        return;
+    }
     if (trips.at(0).getCounter() == counter) {
         answerCall();
         return;

@@ -1,7 +1,3 @@
-//
-// Created by eliyagvili on 28/11/16.
-//
-
 #include "BasicCab.h"
 
 BasicCab::BasicCab() {
@@ -64,7 +60,6 @@ bool BasicCab::operator!=(const BasicCab &c) const {
 }
 
 ostream &operator<<(ostream &output, const BasicCab &c) {
-    //output<<c.location;
-    output<<'('<<c.getLocation().getNodePx()<<','<<c.getLocation().getNodePy()<<')';
-    //return output;
+    output << '(' << c.getLocation().getNodePx() << ','
+           << c.getLocation().getNodePy() << ')';
 }

@@ -16,11 +16,11 @@ using namespace std;
  */
 class TaxiCenter {
 private:
-    vector<Driver> drivers;
-    vector<BasicCab> cabs;
-    vector<TripInformation> trips;
+    vector <Driver> drivers;
+    vector <BasicCab> cabs;
+    vector <TripInformation> trips;
     Graph *cleanGraph;
-    vector<Node> obstacles;
+    vector <Node> obstacles;
     int counter;
     bool reachedToDest;
     bool toSend;
@@ -63,7 +63,7 @@ public:
     /*
      * Function that returns the drivers list.
      */
-    vector<Driver> getDrivers();
+    vector <Driver> getDrivers();
 
     /*
      * Function that gets a cab and adds it to the cabs list.
@@ -78,7 +78,7 @@ public:
     /*
      * Function that returns the cabs list.
      */
-    vector<BasicCab> getCabs();
+    vector <BasicCab> getCabs();
 
     /*
      * Function that gets a trip and adds it to the trips list.
@@ -93,7 +93,7 @@ public:
     /*
      * Function that returns the trips list.
      */
-    vector<TripInformation> getTrips();
+    vector <TripInformation> getTrips();
 
     /*
      * Function that gets a Driver, and removes it from the locations' map.
@@ -119,17 +119,17 @@ public:
     void updateGraph(Graph *g);
 
     /*
-     * Function that get driver and return its place in the taxi center.
+     * Function that get driver id and return its place in the taxi center.
      */
     int findDriverPlace(Driver d);
 
     /*
-     * Function that return is to sent true.
+     * Function that return toSend.
      */
     bool isToSend() const;
 
     /*
-     * Function that return is reached true.
+     * Function that return reachedToDest.
      */
     bool isReached() const;
 };

@@ -1,5 +1,6 @@
 #include "Graph.h"
 
+
 int Graph::getWidth() {
     return sizeX;
 }

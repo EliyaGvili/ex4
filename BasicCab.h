@@ -29,6 +29,7 @@ protected:
     Node location;
 public:
 
+
     BasicCab();
 
     /*
@@ -93,14 +94,15 @@ public:
     bool operator!=(const BasicCab &rhs) const;
 
     /*
-     * Function that prints cab with <<.
+     * FUnction that prints Basic cab in use of <<.
      */
     friend ostream &operator<<(ostream &output, const BasicCab &c);
 
     /*
-     * Function that serialize
+     * Function that serialize Basic cab
      */
     friend class boost::serialization::access;
+
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
         ar & id;
@@ -112,5 +114,6 @@ public:
         ar & location;
     }
 };
+
 
 #endif //EX3_BASICCAB_H

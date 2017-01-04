@@ -66,7 +66,7 @@ public:
     friend ostream &operator<<(ostream &output, const Point &p);
 
     /*
-     * Function that serialize point.
+     * Function that serialize Point.
      */
     friend class boost::serialization::access;
 

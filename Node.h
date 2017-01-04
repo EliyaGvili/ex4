@@ -104,7 +104,7 @@ public:
     void deleteNeighbors();
 
     /*
-     * Function that serialize node.
+     * Function that serialize Node.
      */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {

@@ -40,17 +40,17 @@ public:
     virtual void validateNeighbors(Node node) = 0;
 
     /*
-     * Function that return the width.
+     * Function that return width.
      */
     int getWidth();
 
     /*
-     * Function that return the height.
+     * FUnction that return height.
      */
     int getHeight();
 
     /*
-     * Function that serialize the graph.
+     * Function that serialize Graph.
      */
     friend class boost::serialization::access;
 
@@ -59,9 +59,8 @@ public:
         ar & sizeX;
         ar & sizeY;
     }
-
-
 };
+
 
 BOOST_SERIALIZATION_ASSUME_ABSTRACT(Graph);
 

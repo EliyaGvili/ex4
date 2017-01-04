@@ -57,10 +57,11 @@ public:
      * The function that runs the program - there are 7 choices, every number
      * between 1-7 calls another mission.
      */
-    void startFlow();
+    void startFlow(const int given_port_num);
 
     /*
-     * Function that recive driver from the socket.
+     * Function that recieve driver.
+     * by socket.
      */
     void recieveDriver(Socket *socket);
 

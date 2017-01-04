@@ -1,11 +1,11 @@
-//
-// Created by eliyagvili on 23/11/16.
-//
-
 #include "Grid.h"
 
 
 Grid::Grid() {
+
+}
+
+Grid::~Grid() {
 
 }
 
@@ -31,6 +31,7 @@ Node Grid::getSource(Node node) {
 void Grid::validateNeighbors(Node node) {
     node.validateNeighbors(sizeX, sizeY);
 }
+
 
 BOOST_CLASS_EXPORT(Grid);
 

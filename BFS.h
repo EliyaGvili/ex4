@@ -13,7 +13,7 @@
  */
 class BFS {
 private:
-    std::stack<Node> nodeStack;
+    std::stack <Node> nodeStack;
     Node dsNode;
 public:
     BFS();
@@ -25,10 +25,11 @@ public:
     BFS(Node n);
 
     /*
-     * bfs function, get node, destination node, queue of nodes and pointer to graph.
-     * It returns a node after calculating the shortest path between the 2 nodes.
+     * bfs function, get node, destination node, queue of nodes and pointer to
+     * graph. It returns a node after calculating the shortest path between
+     * the 2 nodes.
      */
-    Node bfs(Node node, queue<Node> nodeQueue, Graph &graph);
+    Node bfs(Node node, queue <Node> nodeQueue, Graph &graph);
 
     /*
      * addToStack function - adds to the stack the node it gets.
@@ -43,12 +44,12 @@ public:
     /*
     * Function that returns a stack of Node that represent the fastest road.
     */
-    stack<Node> returnFasterRoad();
+    stack <Node> returnFasterRoad();
 
     /*
      * Function that return stack of Nodes.
      */
-    stack<Node> getNodeStack() const;
+    stack <Node> getNodeStack() const;
 
     /*
      * Function that return the destination node.
@@ -56,5 +57,6 @@ public:
     Node getDsNode() const;
 
 };
+
 
 #endif

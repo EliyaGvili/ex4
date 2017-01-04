@@ -33,9 +33,8 @@ private:
     int numOfCostumers;
     Graph *cityGrid;
     list <Passenger> currentPassengers;
-    list<Node> wayToCostumer;
+    list <Node> wayToCostumer;
     int requestedCabID;
-
 
 public:
 
@@ -43,6 +42,11 @@ public:
      * The Driver constructor.
      */
     Driver();
+
+    /*
+     * The driver destrictor.
+     */
+    ~Driver();
 
     /*
      * The Driver constructor.
@@ -80,7 +84,7 @@ public:
      * stack of nodes with the best road. That is also the returned value of
      * this -calculateWayToCostumer - function.
      */
-    stack<Node> calculateWayToCostumer(Node dstNode);
+    stack <Node> calculateWayToCostumer(Node dstNode);
 
     /*
      * Function that returns true if the two drivers are equal, else false.
@@ -147,7 +151,11 @@ public:
      */
     void updateCabLocation(Node n);
 
-    list<Node> getWayToCostumer ();
+    /*
+     * Function that return list of node.
+     * that is way to costumer.
+     */
+    list <Node> getWayToCostumer();
 
     /*
      * Function that prints the driver's location.
@@ -165,27 +173,32 @@ public:
     bool operator!=(const Driver &rhs) const;
 
     /*
-     * Function that return requested cab id.
+     * Function that return the drivers cab id.
      */
     int getRequestedCabID();
 
     /*
-     * Function that get requested cab id and set it.
+     * FUnction that get cab id and set the drivers cab id.
      */
     void setRequestedCabID(int requestedCabID);
 
     /*
-     * Function that get list of nodes and sets it.
+     * Function that get nodes list and set the way to costumer.
      */
     void setWayToCostumer(list <Node> givenWayToCostumer);
 
     /*
-     * Function that serialize the driver.
+     * FUnction that delete the graph that the driver holds.
+     */
+    void deleteGraph();
+
+    /*
+     * Function that serialize Driver
      */
     friend class boost::serialization::access;
+
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version)
-    {
+    void serialize(Archive &ar, const unsigned int version) {
         ar & id;
         ar & age;
         ar & mStatus;
@@ -198,6 +211,8 @@ public:
         ar & wayToCostumer;
         ar & requestedCabID;
     }
+
 };
+
 
 #endif

@@ -17,7 +17,7 @@ void BFS::addToStack(Node n) {
 }
 
 
-Node BFS::bfs(Node node, queue<Node> nodeQueue, Graph &graph) {
+Node BFS::bfs(Node node, queue <Node> nodeQueue, Graph &graph) {
     int i;
     int numOfNeighbors = node.getNumOfNeighbors();
     //calc the node neighbors.
@@ -53,8 +53,8 @@ Node BFS::bfs(Node node, queue<Node> nodeQueue, Graph &graph) {
     }
 }
 
-stack<Node> BFS::returnFasterRoad() {
-    stack<Node> stack;
+stack <Node> BFS::returnFasterRoad() {
+    stack <Node> stack;
     for (int i = 0; i < nodeStack.size(); i++) {
         stack.push(nodeStack.top());
         if (nodeStack.top().isEqual(dsNode)) {
@@ -78,7 +78,7 @@ void BFS::printRoad() {
     }
 }
 
-stack<Node> BFS::getNodeStack() const {
+stack <Node> BFS::getNodeStack() const {
     return nodeStack;
 }
 

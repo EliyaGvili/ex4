@@ -12,20 +12,23 @@ MainFlow::MainFlow(TaxiCenter t) {
     taxiCenter = t;
 }
 
-void MainFlow::startFlow() {
+
+void MainFlow::startFlow(const int given_port_num) {
     string str;
     int x, y, numOfObstacles;
-    vector<Node> obstacles;
-    const char *ip_address = "127.0.0.1";
-    const int port_num = 5555;
+    vector <Node> obstacles;
+    const int port_num = given_port_num;
 
     Socket *socket = new Udp(1, port_num);
     socket->initialize();
 
     //creating the grid.
     getline(cin, str);
-    x = atoi((str.substr(0, 1)).c_str());
-    y = atoi((str.substr(str.find(" ") + 1, 1)).c_str());
+    string delimiter = " ";
+    string xString = str.substr((0, str.find(delimiter)));
+    string yString = (str.substr(str.find(delimiter) + 1, str.size() - 1));
+    x = atoi(xString.c_str());
+    y = atoi(yString.c_str());
     //if x<=0 or y<=0.
     if (!validateGridParameters(x, y)) {
         return;
@@ -92,31 +95,33 @@ void MainFlow::startFlow() {
             }
             case '7': {
                 socket->sendData("close");
-                socket->~Socket();
+                delete socket;
                 break;
             }
             case '9': {
                 taxiCenter.sendCab();
                 if (taxiCenter.isToSend()) {
+                    socket->sendData("continue");
                     Node node = taxiCenter.getTrips().at(0).getDriver()
                             .getCabInfo().getLocation();
-                    Node *serializedNode = &node;
+                    Node *serializedNode = new Node(node.getPoint());
                     std::string serial_str;
-                    boost::iostreams::back_insert_device<std::string> inserter(
+                    boost::iostreams::back_insert_device <std::string> inserter(
                             serial_str);
-                    boost::iostreams::stream<boost::iostreams::back_insert_device<std::string> > s(
-                            inserter);
+                    boost::iostreams::stream
+                    <boost::iostreams::back_insert_device
+                            <std::string>> s(inserter);
                     boost::archive::binary_oarchive oa(s);
                     oa << serializedNode;
                     s.flush();
 
                     socket->sendData(serial_str);
-                    socket->sendData("continue");
+                    delete serializedNode;
+
                 }
                 if (taxiCenter.isReached()) {
                     taxiCenter.removeTrip(taxiCenter.getTrips().at(0));
-                    /*
-                     * we already passed on the graph - we need a "clean" graph like
+                    /* we already passed on the graph - we need a "clean" graph like
                      * in the beginning, updated by the given obstacles we've got.
                      * attaching the "clean" graph to all of the drivers.
                     */
@@ -143,61 +148,6 @@ void MainFlow::startFlow() {
     } while (taskNum != '7');
 }
 
-void MainFlow::parseDriver(string str) throw(exception) {
-    int saperatorP, driverId, driverAge, driverExp, vehiclId;
-    char driverStatus;
-    MartialStatus driverStatusStr;
-    saperatorP = str.find(",");
-    driverId = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
-    if (driverId < 0) {
-        throw exception();
-    }
-    str = str.substr(saperatorP + 1);
-    saperatorP = str.find(",");
-    driverAge = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
-    if (driverAge < 0) {
-        throw exception();
-    }
-    str = str.substr(saperatorP + 1);
-    saperatorP = str.find(",");
-    driverStatus = (str.substr(0, 1))[0];
-    switch (driverStatus) {
-        case 'S':
-            driverStatusStr = SINGLE;
-            break;
-        case 'M':
-            driverStatusStr = MARRIED;
-            break;
-        case 'D':
-            driverStatusStr = DIVORCED;
-            break;
-        case 'W':
-            driverStatusStr = WIDOWED;
-            break;
-        default:
-            throw exception();
-    }
-
-    str = str.substr(saperatorP + 1);
-    if (str[0] == '-') {
-        throw exception();
-    }
-    saperatorP = str.find(",");
-    driverExp = atoi(str.substr(0, (str.length() - saperatorP - 1)).c_str());
-    str = str.substr(saperatorP + 1);
-    vehiclId = atoi((str.substr(0)).c_str());
-    if (vehiclId < 0) {
-        throw exception();
-    }
-    //creating the driver
-    Driver driver(driverId, driverAge, driverStatusStr, driverExp);
-    //attacing the driver the relevant cab
-    BasicCab cab = taxiCenter.findCabByID(vehiclId);
-    driver.setCab(cab);
-    driver.setGraph(graph);
-    //attaching the driver to the taxi center.
-    taxiCenter.addDriver(driver);
-}
 
 void MainFlow::parseTrip(string str) throw(exception) {
     int saperatorP, tripId, tripXStart, tripYStart, tripXEnd,
@@ -364,38 +314,35 @@ void MainFlow::recieveDriver(Socket *socket) {
     char buffer[2048];
     //recieving the driver
     socket->reciveData(buffer, sizeof(buffer));
-
-    cout << buffer << endl;
-
     // **DeSerialize**//
     Driver *driver;
     boost::iostreams::basic_array_source<char> device(buffer, sizeof(buffer));
-    boost::iostreams::stream<boost::iostreams::basic_array_source<char> > s(device);
+    boost::iostreams::stream <boost::iostreams::basic_array_source<char>> s(
+            device);
     boost::archive::binary_iarchive ia(s);
 
     ia >> driver;
-    cout << driver->getCabInfo().getLocation() << endl;
 
     //find the cab by requested id and attach it to the driver
     BasicCab cab = taxiCenter.findCabByID(driver->getRequestedCabID());
-    driver->setGraph(graph);
     driver->setCab(cab);
 
+    Driver serializedDriver = *driver;
+    serializedDriver.setGraph(graph);
     //add the driver to the taxi center
-    taxiCenter.addDriver(*driver);
+    taxiCenter.addDriver(serializedDriver);
+    delete driver;
 
     /**Serialize Cab**/
     BasicCab *basicCab;
     basicCab = &cab;
     std::string serial_str;
-    boost::iostreams::back_insert_device<std::string> inserter(serial_str);
+    boost::iostreams::back_insert_device <std::string> inserter(serial_str);
     boost::iostreams::
-    stream<boost::iostreams::back_insert_device<std::string> > s2(inserter);
+    stream <boost::iostreams::back_insert_device<std::string>> s2(inserter);
     boost::archive::binary_oarchive oa(s2);
     oa << basicCab;
     s2.flush();
-
-    cout << basicCab->getLocation() << endl;
     //send the serialized cab to the client
     socket->sendData(serial_str);
 }
